@@ -35,4 +35,3 @@ while True:  # main game loop
 
     pygame.display.update()
 
-#Hallo DUDE
