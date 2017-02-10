@@ -19,20 +19,24 @@ DISPLAYSURF = pygame.display.set_mode((BOARD_LENGTH, BOARD_HEIGHT))
 pygame.display.set_caption('PONG')
 
 #Spielfeld
-DISPLAYSURF.fill(WHITE)
-pygame.draw.rect(DISPLAYSURF, GAME_COLOUR, ((BOARD_LENGTH/10), (BOARD_HEIGHT/10), (BOARD_LENGTH*0.8), 10))
-pygame.draw.rect(DISPLAYSURF, GAME_COLOUR, ((BOARD_LENGTH/10), (BOARD_HEIGHT/10*9), (BOARD_LENGTH*0.8), 10))
-def make_mid_line(y):
-    pygame.draw.rect(DISPLAYSURF, GREY, (BOARD_LENGTH/2-5, y, 10, BOARD_HEIGHT/20))
-for n in range (1, 9):
-    make_mid_line(n*BOARD_HEIGHT/10+(BOARD_LENGTH/50))
+def Spielfeld():
+    DISPLAYSURF.fill(WHITE)
+    pygame.draw.rect(DISPLAYSURF, GAME_COLOUR, ((BOARD_LENGTH/10), (BOARD_HEIGHT/10), (BOARD_LENGTH*0.8), 10))
+    pygame.draw.rect(DISPLAYSURF, GAME_COLOUR, ((BOARD_LENGTH/10), (BOARD_HEIGHT/10*9), (BOARD_LENGTH*0.8), 10))
+    def make_mid_line(y):
+        pygame.draw.rect(DISPLAYSURF, GREY, (BOARD_LENGTH/2-5, y, 10, BOARD_HEIGHT/20))
+    for n in range (1, 9):
+        make_mid_line(n*BOARD_HEIGHT/10+(BOARD_LENGTH/50))
+
+#Schläger
+#def Schlaeger(x):
+#    pygame.draw.rect(DISPLAYSURF, GAME_COLOUR,)
 
 while True:  # main game loop
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT or (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
             pygame.quit()
             sys.exit()
+    Spielfeld()
 
     pygame.display.update()
-
-#
