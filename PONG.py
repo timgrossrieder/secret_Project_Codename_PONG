@@ -28,6 +28,14 @@ def Spielfeld():
     for n in range (1, 9):
         make_mid_line(n*BOARD_HEIGHT/10+(BOARD_LENGTH/50))
 
+# Spielball
+def Spielball(x, y):
+    pygame.draw.circle(DISPLAYSURF, GAME_COLOUR, (x, y), 10)
+
+# Ballpositionen
+xBall = int(BOARD_LENGTH / 2)
+yBall = int(BOARD_HEIGHT / 2)
+
 #Schläger
 Schlaegerspeed = 1
 def Schlaeger(x, y, Geschwindigkeit):
