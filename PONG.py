@@ -29,7 +29,8 @@ def Spielfeld():
         make_mid_line(n*BOARD_HEIGHT/10+(BOARD_LENGTH/50))
 
 #Schläger
-def Schlaeger(x, y):
+Schlaegerspeed = 1
+def Schlaeger(x, y, Geschwindigkeit):
     pygame.draw.rect(DISPLAYSURF, GAME_COLOUR,(x, y, BOARD_LENGTH/50, BOARD_HEIGHT/5))
 
 #Starthöhen Schläger
@@ -42,7 +43,7 @@ while True:  # main game loop
             pygame.quit()
             sys.exit()
     Spielfeld()
-    Schlaeger(BOARD_LENGTH/10, Hoehe_Schl1)
-    Schlaeger(BOARD_LENGTH/10*9-BOARD_LENGTH/50, Hoehe_Schl2)
+    Schlaeger(BOARD_LENGTH/10, Hoehe_Schl1, Schlaegerspeed)
+    Schlaeger(BOARD_LENGTH/10*9-BOARD_LENGTH/50, Hoehe_Schl2, Schlaegerspeed)
 
     pygame.display.update()
