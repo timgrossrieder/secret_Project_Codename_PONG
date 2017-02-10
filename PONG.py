@@ -25,7 +25,7 @@ pygame.draw.rect(DISPLAYSURF, GAME_COLOUR, ((BOARD_LENGTH/10), (BOARD_HEIGHT/10*
 def make_mid_line(y):
     pygame.draw.rect(DISPLAYSURF, GREY, (BOARD_LENGTH/2-5, y, 10, BOARD_HEIGHT/20))
 for n in range (1, 9):
-    make_mid_line(n*BOARD_HEIGHT/10+20)
+    make_mid_line(n*BOARD_HEIGHT/10+(BOARD_LENGTH/50))
 
 while True:  # main game loop
     for event in pygame.event.get():
@@ -35,4 +35,4 @@ while True:  # main game loop
 
     pygame.display.update()
 
-#Hallo
+#Hallo DUDE
