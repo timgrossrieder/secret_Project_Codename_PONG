@@ -16,7 +16,7 @@ GAME_COLOUR = BLACK
 pygame.init()
 
 DISPLAYSURF = pygame.display.set_mode((BOARD_LENGTH, BOARD_HEIGHT))
-pygame.display.set_caption('PONG123')
+pygame.display.set_caption('PONG')
 
 #Spielfeld
 DISPLAYSURF.fill(WHITE)
@@ -34,3 +34,5 @@ while True:  # main game loop
             sys.exit()
 
     pygame.display.update()
+
+#Hallo
