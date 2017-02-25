@@ -36,14 +36,34 @@ def Spielball(x, y):
 xBall = int(BOARD_LENGTH / 2)
 yBall = int(BOARD_HEIGHT / 2)
 
-#Schläger
-Schlaegerspeed = 1
-def Schlaeger(x, y, Geschwindigkeit):
-    pygame.draw.rect(DISPLAYSURF, GAME_COLOUR,(x, y, BOARD_LENGTH/50, BOARD_HEIGHT/5))
+# Schläger
+# Starthöhen Schläger
+Hoehe_S1 = BOARD_HEIGHT / 2
+Hoehe_S2 = BOARD_HEIGHT / 2
 
-#Starthöhen Schläger
-Hoehe_Schl1 = BOARD_HEIGHT/2
-Hoehe_Schl2 = BOARD_HEIGHT/2
+Schlaegerspeed = 0.1
+
+class Schlaeger():
+    def __init__(self,x,y):
+        self.x = x
+        self.y = y
+
+    def zeichne_Schlaeger(self):
+        pygame.draw.rect(DISPLAYSURF, GAME_COLOUR,(self.x, self.y, BOARD_LENGTH/50, BOARD_HEIGHT/5))
+
+    def Schlaegerbewegung(self, Schlaegerspeed):
+        keys = pygame.key.get_pressed()
+        if self == S1:
+            if event.type == pygame.KEYDOWN and keys[K_s]:
+                self.y = self.y + Schlaegerspeed
+            if event.type == pygame.KEYDOWN and keys[K_w]:
+                self.y = self.y - Schlaegerspeed
+        if self == S2:
+            if event.type == pygame.KEYDOWN and keys[K_DOWN]:
+                self.y = self.y + Schlaegerspeed
+            if event.type == pygame.KEYDOWN and keys[K_UP]:
+                self.y = self.y - Schlaegerspeed
+        return self.y
 
 while True:  # main game loop
     for event in pygame.event.get():
@@ -51,7 +71,11 @@ while True:  # main game loop
             pygame.quit()
             sys.exit()
     Spielfeld()
-    Schlaeger(BOARD_LENGTH/10, Hoehe_Schl1, Schlaegerspeed)
-    Schlaeger(BOARD_LENGTH/10*9-BOARD_LENGTH/50, Hoehe_Schl2, Schlaegerspeed)
+    S1 = Schlaeger(BOARD_LENGTH/10, Hoehe_S1)
+    S2 = Schlaeger(BOARD_LENGTH/10*9-BOARD_LENGTH/50, Hoehe_S2)
+    Hoehe_S1 = S1.Schlaegerbewegung(Schlaegerspeed)
+    Hoehe_S2 = S2.Schlaegerbewegung(Schlaegerspeed)
+    S1.zeichne_Schlaeger()
+    S2.zeichne_Schlaeger()
 
     pygame.display.update()
