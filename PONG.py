@@ -41,7 +41,7 @@ yBall = int(BOARD_HEIGHT / 2)
 Hoehe_S1 = BOARD_HEIGHT / 2
 Hoehe_S2 = BOARD_HEIGHT / 2
 
-Schlaegerspeed = 0.1
+Schlaegerspeed = 0.5
 
 class Schlaeger():
     def __init__(self,x,y):
