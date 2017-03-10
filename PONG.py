@@ -54,14 +54,14 @@ class Schlaeger():
     def Schlaegerbewegung(self, Schlaegerspeed):
         keys = pygame.key.get_pressed()
         if self == S1:
-            if event.type == pygame.KEYDOWN and keys[K_s]:
+            if keys[K_s]:
                 self.y = self.y + Schlaegerspeed
-            if event.type == pygame.KEYDOWN and keys[K_w]:
+            if keys[K_w]:
                 self.y = self.y - Schlaegerspeed
-        if self == S2:
-            if event.type == pygame.KEYDOWN and keys[K_DOWN]:
+        elif self == S2:
+            if keys[K_l]:
                 self.y = self.y + Schlaegerspeed
-            if event.type == pygame.KEYDOWN and keys[K_UP]:
+            if keys[K_o]:
                 self.y = self.y - Schlaegerspeed
         return self.y
 
