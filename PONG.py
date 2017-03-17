@@ -29,12 +29,18 @@ def Spielfeld():
         make_mid_line(n*BOARD_HEIGHT/10+(BOARD_LENGTH/50))
 
 # Spielball
-def Spielball(x, y):
-    pygame.draw.circle(DISPLAYSURF, GAME_COLOUR, (x, y), 10)
+class Spielball:
+
+    def __init__(self,x,y):
+        self.x = x
+        self.y = y
+
+    def zeichne_Spielball(self):
+        pygame.draw.circle(DISPLAYSURF, GAME_COLOUR, (self.x, self.y), 10)
 
 # Ballpositionen
 xBall = int(BOARD_LENGTH / 2)
-yBall = int(BOARD_HEIGHT / 2)
+yBall = int(BOARD_HEIGHT / 2) + 5
 
 # Schläger
 # Starthöhen Schläger
@@ -54,14 +60,14 @@ class Schlaeger():
     def Schlaegerbewegung(self, Schlaegerspeed):
         keys = pygame.key.get_pressed()
         if self == S1:
-            if keys[K_s] and (self.y + Schlaegerspeed) < (BOARD_HEIGHT/10*9 - BOARD_HEIGHT/5):
+            if keys[K_s] and (self.y + Schlaegerspeed) <= (BOARD_HEIGHT/10*9 - BOARD_HEIGHT/5):
                 self.y = self.y + Schlaegerspeed
-            if keys[K_w] and (self.y - Schlaegerspeed) > (BOARD_HEIGHT/10 + 10):
+            if keys[K_w] and (self.y - Schlaegerspeed) >= (BOARD_HEIGHT/10 + 10):
                 self.y = self.y - Schlaegerspeed
         elif self == S2:
-            if keys[K_l] and (self.y + Schlaegerspeed) < (BOARD_HEIGHT/10*9 - BOARD_HEIGHT/5):
+            if keys[K_l] and (self.y + Schlaegerspeed) <= (BOARD_HEIGHT/10*9 - BOARD_HEIGHT/5):
                 self.y = self.y + Schlaegerspeed
-            if keys[K_o] and (self.y - Schlaegerspeed) > (BOARD_HEIGHT/10 + 10):
+            if keys[K_o] and (self.y - Schlaegerspeed) >= (BOARD_HEIGHT/10 + 10):
                 self.y = self.y - Schlaegerspeed
         return self.y
 
@@ -77,5 +83,7 @@ while True:  # main game loop
     Hoehe_S2 = S2.Schlaegerbewegung(Schlaegerspeed)
     S1.zeichne_Schlaeger()
     S2.zeichne_Schlaeger()
+    Ball = Spielball(xBall,yBall)
+    Ball.zeichne_Spielball()
 
     pygame.display.update()
