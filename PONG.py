@@ -36,7 +36,15 @@ class Spielball:
         self.y = y
 
     def zeichne_Spielball(self):
-        pygame.draw.circle(DISPLAYSURF, GAME_COLOUR, (self.x, self.y), 10)
+        pygame.draw.circle(DISPLAYSURF, GAME_COLOUR, (int(self.x), int(self.y)), 10)
+
+    def Ballbewegung(self, ball_s_x, ball_s_y):
+        self.x = (self.x + ball_s_x)
+        self.y = (self.y + ball_s_y)
+
+#Ballspeed
+ball_speed_x = 0.3
+ball_speed_y = 0.3
 
 # Ballpositionen
 xBall = int(BOARD_LENGTH / 2)
@@ -84,6 +92,10 @@ while True:  # main game loop
     S1.zeichne_Schlaeger()
     S2.zeichne_Schlaeger()
     Ball = Spielball(xBall,yBall)
+    Ball.Ballbewegung(ball_speed_x,ball_speed_y)
+    xBall = Ball.x
+    yBall = Ball.y
     Ball.zeichne_Spielball()
+
 
     pygame.display.update()
