@@ -40,11 +40,12 @@ class Spielball:
 
     def Ballbewegung(self, ball_s_x, ball_s_y):
         self.x = (self.x + ball_s_x)
-        self.y = (self.y + ball_s_y)
+        if (self.y + 10) < (BOARD_HEIGHT/10*9) and (self.y - 10) > (BOARD_HEIGHT/10 + 10):
+            self.y = (self.y + ball_s_y)
 
 #Ballspeed
 ball_speed_x = 0.3
-ball_speed_y = 0.3
+ball_speed_y = -0.3
 
 # Ballpositionen
 xBall = int(BOARD_LENGTH / 2)
