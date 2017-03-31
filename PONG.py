@@ -28,19 +28,37 @@ def Spielfeld():
     for n in range (1, 9):
         make_mid_line(n*BOARD_HEIGHT/10+(BOARD_LENGTH/50))
 
+# Balleigenschaften
+Radius = 10
+
+# Ballspeed
+ball_speed_x = 0.1
+ball_speed_y = 0.3
+
+# Ballpositionen
+xBall = int(BOARD_LENGTH / 2)
+yBall = int(BOARD_HEIGHT / 2) + 5
+
+def check_Schlaegerkollision(ball, schlaeger):
+    if ball.x + ball.radius > (BOARD_LENGTH / 10 * 9 - BOARD_LENGTH / 50) and ball.y - ball.radius > schlaeger.y:
+        ball.x_speed = -ball.x_speed
+
+
 # Spielball
 class Spielball:
 
-    def __init__(self, x, y, x_speed, y_speed):
+    def __init__(self, x, y, x_speed, y_speed, radius):
         self.x = x
         self.y = y
         self.x_speed = x_speed
         self.y_speed = y_speed
+        self.radius = radius
 
     def zeichne_Spielball(self):
-        pygame.draw.circle(DISPLAYSURF, GAME_COLOUR, (int(self.x), int(self.y)), 10)
+        pygame.draw.circle(DISPLAYSURF, GAME_COLOUR, (int(self.x), int(self.y)), self.radius)
 
     def Ballbewegung(self):
+        check_Schlaegerkollision(Ball, S1)
         self.x = (self.x + self.x_speed)
         if (self.y + 10) < (BOARD_HEIGHT/10*9) and (self.y - 10) > (BOARD_HEIGHT/10 + 10):
             self.y = (self.y + self.y_speed)
@@ -48,14 +66,6 @@ class Spielball:
             self.y_speed = self.y_speed * -1
             self.y = (self.y + self.y_speed)
 
-
-#Ballspeed
-ball_speed_x = -0.1
-ball_speed_y = 0.3
-
-# Ballpositionen
-xBall = int(BOARD_LENGTH / 2)
-yBall = int(BOARD_HEIGHT / 2) + 5
 
 # Schläger
 # Starthöhen Schläger
@@ -90,7 +100,7 @@ class Schlaeger():
 
 S1 = Schlaeger(BOARD_LENGTH / 10, Hoehe_S1, Schlaegerspeed)
 S2 = Schlaeger(BOARD_LENGTH / 10 * 9 - BOARD_LENGTH / 50, Hoehe_S2, Schlaegerspeed)
-Ball = Spielball(xBall,yBall, ball_speed_x, ball_speed_y)
+Ball = Spielball(xBall,yBall, ball_speed_x, ball_speed_y, Radius)
 
 while True:  # main game loop
     for event in pygame.event.get():
