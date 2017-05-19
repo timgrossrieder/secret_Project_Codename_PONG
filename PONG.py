@@ -32,16 +32,20 @@ def Spielfeld():
 Radius = 10
 
 # Ballspeed
-ball_speed_x = 0.1
+ball_speed_x = 0.5
 ball_speed_y = 0.3
 
 # Ballpositionen
 xBall = int(BOARD_LENGTH / 2)
 yBall = int(BOARD_HEIGHT / 2) + 5
 
-def check_Schlaegerkollision(ball, schlaeger):
-    if ball.x + ball.radius > (BOARD_LENGTH / 10 * 9 - BOARD_LENGTH / 50) and ball.y - ball.radius > schlaeger.y:
-        ball.x_speed = -ball.x_speed
+def check_Schlaegerkollision(schlaeger):
+    if schlaeger == S2:
+        if Ball.x + Ball.radius > ((BOARD_LENGTH / 10 * 9) - 20) and (Ball.y - Ball.radius > schlaeger.y and Ball.y + Ball.radius < schlaeger.y + schlaeger.laenge):
+            Ball.x_speed = -abs(Ball.x_speed)
+    if schlaeger == S1:
+        if Ball.x - Ball.radius < ((BOARD_LENGTH / 10) + 20) and (Ball.y - Ball.radius > schlaeger.y and Ball.y + Ball.radius < schlaeger.y + schlaeger.laenge):
+            Ball.x_speed = abs(Ball.x_speed)
 
 
 # Spielball
@@ -58,7 +62,8 @@ class Spielball:
         pygame.draw.circle(DISPLAYSURF, GAME_COLOUR, (int(self.x), int(self.y)), self.radius)
 
     def Ballbewegung(self):
-        check_Schlaegerkollision(Ball, S1)
+        check_Schlaegerkollision(S1)
+        check_Schlaegerkollision(S2)
         self.x = (self.x + self.x_speed)
         if (self.y + 10) < (BOARD_HEIGHT/10*9) and (self.y - 10) > (BOARD_HEIGHT/10 + 10):
             self.y = (self.y + self.y_speed)
@@ -79,28 +84,30 @@ class Schlaeger():
         self.x = x
         self.y = y
         self.speed = Schlaegerspeed
+        self.laenge = BOARD_HEIGHT/5
+        self.dicke = BOARD_LENGTH/50
 
     def zeichne_Schlaeger(self):
-        pygame.draw.rect(DISPLAYSURF, GAME_COLOUR,(self.x, self.y, BOARD_LENGTH/50, BOARD_HEIGHT/5))
+        pygame.draw.rect(DISPLAYSURF, GAME_COLOUR,(self.x, self.y, BOARD_LENGTH/50, self.laenge))
 
     def Schlaegerbewegung(self):
         keys = pygame.key.get_pressed()
         if self == S1:
-            if keys[K_s] and (self.y + self.speed) <= (BOARD_HEIGHT/10*9 - BOARD_HEIGHT/5):
+            if keys[K_s] and (self.y + self.speed) <= (BOARD_HEIGHT/10*9 - self.laenge):
                 self.y = self.y + self.speed
             if keys[K_w] and (self.y - self.speed) >= (BOARD_HEIGHT/10 + 10):
                 self.y = self.y - self.speed
         elif self == S2:
-            if keys[K_l] and (self.y + self.speed) <= (BOARD_HEIGHT/10*9 - BOARD_HEIGHT/5):
+            if keys[K_l] and (self.y + self.speed) <= (BOARD_HEIGHT/10*9 - self.laenge):
                 self.y = self.y + self.speed
             if keys[K_o] and (self.y - self.speed) >= (BOARD_HEIGHT/10 + 10):
                 self.y = self.y - self.speed
-        return self.y
 
+Resultat = [0, 0]
 
 S1 = Schlaeger(BOARD_LENGTH / 10, Hoehe_S1, Schlaegerspeed)
 S2 = Schlaeger(BOARD_LENGTH / 10 * 9 - BOARD_LENGTH / 50, Hoehe_S2, Schlaegerspeed)
-Ball = Spielball(xBall,yBall, ball_speed_x, ball_speed_y, Radius)
+Ball = Spielball(xBall, yBall, ball_speed_x, ball_speed_y, Radius)
 
 while True:  # main game loop
     for event in pygame.event.get():
@@ -108,13 +115,11 @@ while True:  # main game loop
             pygame.quit()
             sys.exit()
     Spielfeld()
-    Hoehe_S1 = S1.Schlaegerbewegung()
-    Hoehe_S2 = S2.Schlaegerbewegung()
+    S1.Schlaegerbewegung()
+    S2.Schlaegerbewegung()
     S1.zeichne_Schlaeger()
     S2.zeichne_Schlaeger()
     Ball.Ballbewegung()
-    xBall = Ball.x
-    yBall = Ball.y
     Ball.zeichne_Spielball()
 
 
