@@ -32,7 +32,7 @@ def Spielfeld():
 Radius = 10
 
 # Ballspeed
-ball_speed_x = 0.4
+ball_speed_x = 0.5
 ball_speed_y = 0.6
 
 # Ballpositionen
@@ -107,15 +107,18 @@ Resultat = [0, 0]
 
 def Spielstand():
     if Ball.x - Ball.radius < (BOARD_LENGTH / 10):
-        Resultat[0] = Resultat[0] + 1
-        Ball.x = xBall
-        Ball.y = yBall
-    if Ball.x + Ball.radius > (BOARD_LENGTH / 10 * 9):
         Resultat[1] = Resultat[1] + 1
         Ball.x = xBall
         Ball.y = yBall
-    return Resultat
+    if Ball.x + Ball.radius > (BOARD_LENGTH / 10 * 9):
+        Resultat[0] = Resultat[0] + 1
+        Ball.x = xBall
+        Ball.y = yBall
 
+def Anzeige():
+    font = pygame.font.SysFont("comicsansms", 72)
+    text = font.render((str(Resultat[0])+" : "+ str(Resultat[1])), True, (BLACK))
+    DISPLAYSURF.blit(text, (BOARD_LENGTH / 2 - text.get_width() // 2, BOARD_HEIGHT / 50))
 
 S1 = Schlaeger(BOARD_LENGTH / 10, Hoehe_S1, Schlaegerspeed)
 S2 = Schlaeger(BOARD_LENGTH / 10 * 9 - BOARD_LENGTH / 50, Hoehe_S2, Schlaegerspeed)
@@ -134,6 +137,7 @@ while True:  # main game loop
     Ball.Ballbewegung()
     Ball.zeichne_Spielball()
     Spielstand()
+    Anzeige()
 
 
 
