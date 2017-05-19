@@ -124,6 +124,25 @@ S1 = Schlaeger(BOARD_LENGTH / 10, Hoehe_S1, Schlaegerspeed)
 S2 = Schlaeger(BOARD_LENGTH / 10 * 9 - BOARD_LENGTH / 50, Hoehe_S2, Schlaegerspeed)
 Ball = Spielball(xBall, yBall, ball_speed_x, ball_speed_y, Radius)
 
+
+
+
+start = True
+while start:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT or (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
+            pygame.quit()
+            sys.exit()
+        if event.type == pygame.KEYUP and event.key == pygame.K_RETURN:
+            start = False
+        else:
+            pass
+    Spielfeld()
+    font = pygame.font.SysFont("comicsansms", 60)
+    text = font.render(("Um die Scheisse zu starten, ENTER drücken!"), True, (RED))
+    DISPLAYSURF.blit(text, (BOARD_LENGTH / 2 - text.get_width() // 2, BOARD_HEIGHT / 2 - - text.get_height() // 2))
+    pygame.display.update()
+
 while True:  # main game loop
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
@@ -138,7 +157,5 @@ while True:  # main game loop
     Ball.zeichne_Spielball()
     Spielstand()
     Anzeige()
-
-
 
     pygame.display.update()
