@@ -44,7 +44,7 @@ def check_Schlaegerkollision():
     if Ball.x + Ball.radius > ((BOARD_LENGTH / 10 * 9) - 20) and (Ball.y + Ball.radius > S2.y and Ball.y - Ball.radius < S2.y + S2.laenge):
         Ball.x_speed = -abs(Ball.x_speed)
         if  abs(Ball.y_speed - ((S2.y + S2.laenge / 2) - Ball.y) / 1000) < Ball.y_speed_max:
-            Ball.y_speed = Ball.y_speed - ((S2.y + S2.laenge / 2) - Ball.y) / 800
+            Ball.y_speed = Ball.y_speed - ((S2.y + S2.laenge / 2) - Ball.y) / 600
         else:
             if Ball.y_speed == abs(Ball.y_speed):
                 Ball.y_speed = Ball.y_speed_max
@@ -55,7 +55,7 @@ def check_Schlaegerkollision():
     if Ball.x - Ball.radius < ((BOARD_LENGTH / 10) + 20) and (Ball.y + Ball.radius > S1.y and Ball.y - Ball.radius < S1.y + S1.laenge):
         Ball.x_speed = abs(Ball.x_speed)
         if abs(Ball.y_speed - ((S1.y + S1.laenge / 2) - Ball.y) / 1000) < Ball.y_speed_max:
-            Ball.y_speed = Ball.y_speed - ((S1.y + S1.laenge / 2) - Ball.y) / 1000
+            Ball.y_speed = Ball.y_speed - ((S1.y + S1.laenge / 2) - Ball.y) / 600
         else:
             if Ball.y_speed == abs(Ball.y_speed):
                 Ball.y_speed = Ball.y_speed_max
@@ -141,13 +141,23 @@ S1 = Schlaeger(BOARD_LENGTH / 10, Hoehe_S1, Schlaegerspeed)
 S2 = Schlaeger(BOARD_LENGTH / 10 * 9 - BOARD_LENGTH / 50, Hoehe_S2, Schlaegerspeed)
 Ball = Spielball(xBall, yBall, ball_speed_x, ball_speed_y, ball_speed_y_max, Radius)
 
-FPS = 1500
+FPS = 2000
 FPSCLOCK = pygame.time.Clock()
+
+def easteregg():
+    if Resultat[0] == Resultat[1] == 8:
+        game = False
+        font = pygame.font.SysFont("comicsansms", 72)
+        text = font.render(("Hallo"), True, (RED))
+        DISPLAYSURF.blit(text, (BOARD_LENGTH / 2 - text.get_width() // 2, BOARD_HEIGHT / 2 - text.get_height() // 2))
+        pygame.display.update()
+
 
 
 
 # main game loop
 start = True
+game = True
 while start:
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
@@ -163,7 +173,7 @@ while start:
     DISPLAYSURF.blit(text, (BOARD_LENGTH / 2 - text.get_width() // 2, BOARD_HEIGHT / 2 - text.get_height() // 2))
     pygame.display.update()
 
-while True:
+while game:
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
             pygame.quit()
@@ -177,6 +187,7 @@ while True:
     Ball.zeichne_Spielball()
     Spielstand()
     Anzeige()
+    easteregg()
 
     pygame.display.update()
     FPSCLOCK.tick(FPS)
