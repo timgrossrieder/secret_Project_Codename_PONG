@@ -33,37 +33,52 @@ Radius = 10
 
 # Ballspeed
 ball_speed_x = 0.5
-ball_speed_y = 0.6
+ball_speed_y = 0
+ball_speed_y_max = 2
 
 # Ballpositionen
 xBall = int(BOARD_LENGTH / 2)
 yBall = int(BOARD_HEIGHT / 2) + 5
 
-def check_Schlaegerkollision(schlaeger):
-    if schlaeger == S2:
-        if Ball.x + Ball.radius > ((BOARD_LENGTH / 10 * 9) - 20) and (Ball.y - Ball.radius > schlaeger.y and Ball.y + Ball.radius < schlaeger.y + schlaeger.laenge):
-            Ball.x_speed = -abs(Ball.x_speed)
-    if schlaeger == S1:
-        if Ball.x - Ball.radius < ((BOARD_LENGTH / 10) + 20) and (Ball.y - Ball.radius > schlaeger.y and Ball.y + Ball.radius < schlaeger.y + schlaeger.laenge):
-            Ball.x_speed = abs(Ball.x_speed)
+def check_Schlaegerkollision():
+    if Ball.x + Ball.radius > ((BOARD_LENGTH / 10 * 9) - 20) and (Ball.y + Ball.radius > S2.y and Ball.y - Ball.radius < S2.y + S2.laenge):
+        Ball.x_speed = -abs(Ball.x_speed)
+        if  abs(Ball.y_speed - ((S2.y + S2.laenge / 2) - Ball.y) / 1000) < Ball.y_speed_max:
+            Ball.y_speed = Ball.y_speed - ((S2.y + S2.laenge / 2) - Ball.y) / 800
+        else:
+            if Ball.y_speed == abs(Ball.y_speed):
+                Ball.y_speed = Ball.y_speed_max
+            else:
+                Ball.y_speed = -Ball.y_speed_max
+
+
+    if Ball.x - Ball.radius < ((BOARD_LENGTH / 10) + 20) and (Ball.y + Ball.radius > S1.y and Ball.y - Ball.radius < S1.y + S1.laenge):
+        Ball.x_speed = abs(Ball.x_speed)
+        if abs(Ball.y_speed - ((S1.y + S1.laenge / 2) - Ball.y) / 1000) < Ball.y_speed_max:
+            Ball.y_speed = Ball.y_speed - ((S1.y + S1.laenge / 2) - Ball.y) / 1000
+        else:
+            if Ball.y_speed == abs(Ball.y_speed):
+                Ball.y_speed = Ball.y_speed_max
+            else:
+                Ball.y_speed = -Ball.y_speed_max
 
 
 # Spielball
 class Spielball:
 
-    def __init__(self, x, y, x_speed, y_speed, radius):
+    def __init__(self, x, y, x_speed, y_speed, y_speed_max, radius):
         self.x = x
         self.y = y
         self.x_speed = x_speed
         self.y_speed = y_speed
+        self.y_speed_max = y_speed_max
         self.radius = radius
 
     def zeichne_Spielball(self):
         pygame.draw.circle(DISPLAYSURF, GAME_COLOUR, (int(self.x), int(self.y)), self.radius)
 
     def Ballbewegung(self):
-        check_Schlaegerkollision(S1)
-        check_Schlaegerkollision(S2)
+        check_Schlaegerkollision()
         self.x = (self.x + self.x_speed)
         if (self.y + 10) < (BOARD_HEIGHT/10*9) and (self.y - 10) > (BOARD_HEIGHT/10 + 10):
             self.y = (self.y + self.y_speed)
@@ -110,10 +125,12 @@ def Spielstand():
         Resultat[1] = Resultat[1] + 1
         Ball.x = xBall
         Ball.y = yBall
+        Ball.y_speed = ball_speed_y
     if Ball.x + Ball.radius > (BOARD_LENGTH / 10 * 9):
         Resultat[0] = Resultat[0] + 1
         Ball.x = xBall
         Ball.y = yBall
+        Ball.y_speed = ball_speed_y
 
 def Anzeige():
     font = pygame.font.SysFont("comicsansms", 72)
@@ -122,11 +139,14 @@ def Anzeige():
 
 S1 = Schlaeger(BOARD_LENGTH / 10, Hoehe_S1, Schlaegerspeed)
 S2 = Schlaeger(BOARD_LENGTH / 10 * 9 - BOARD_LENGTH / 50, Hoehe_S2, Schlaegerspeed)
-Ball = Spielball(xBall, yBall, ball_speed_x, ball_speed_y, Radius)
+Ball = Spielball(xBall, yBall, ball_speed_x, ball_speed_y, ball_speed_y_max, Radius)
+
+FPS = 1500
+FPSCLOCK = pygame.time.Clock()
 
 
 
-
+# main game loop
 start = True
 while start:
     for event in pygame.event.get():
@@ -139,11 +159,11 @@ while start:
             pass
     Spielfeld()
     font = pygame.font.SysFont("comicsansms", 60)
-    text = font.render(("Um die Scheisse zu starten, ENTER drücken!"), True, (RED))
-    DISPLAYSURF.blit(text, (BOARD_LENGTH / 2 - text.get_width() // 2, BOARD_HEIGHT / 2 - - text.get_height() // 2))
+    text = font.render(("Drücke ENTER"), True, (RED))
+    DISPLAYSURF.blit(text, (BOARD_LENGTH / 2 - text.get_width() // 2, BOARD_HEIGHT / 2 - text.get_height() // 2))
     pygame.display.update()
 
-while True:  # main game loop
+while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
             pygame.quit()
@@ -159,3 +179,4 @@ while True:  # main game loop
     Anzeige()
 
     pygame.display.update()
+    FPSCLOCK.tick(FPS)
