@@ -1,4 +1,5 @@
 import pygame, sys
+import random
 from pygame.locals import *
 #             R    G    B
 WHITE = (255, 255, 255)
@@ -44,7 +45,7 @@ def check_Schlaegerkollision():
     if Ball.x + Ball.radius > ((BOARD_LENGTH / 10 * 9) - 20) and (Ball.y + Ball.radius > S2.y and Ball.y - Ball.radius < S2.y + S2.laenge):
         Ball.x_speed = -abs(Ball.x_speed)
         if  abs(Ball.y_speed - ((S2.y + S2.laenge / 2) - Ball.y) / 1000) < Ball.y_speed_max:
-            Ball.y_speed = Ball.y_speed - ((S2.y + S2.laenge / 2) - Ball.y) / 600
+            Ball.y_speed = Ball.y_speed - ((S2.y + S2.laenge / 2) - Ball.y) / 100
         else:
             if Ball.y_speed == abs(Ball.y_speed):
                 Ball.y_speed = Ball.y_speed_max
@@ -55,7 +56,7 @@ def check_Schlaegerkollision():
     if Ball.x - Ball.radius < ((BOARD_LENGTH / 10) + 20) and (Ball.y + Ball.radius > S1.y and Ball.y - Ball.radius < S1.y + S1.laenge):
         Ball.x_speed = abs(Ball.x_speed)
         if abs(Ball.y_speed - ((S1.y + S1.laenge / 2) - Ball.y) / 1000) < Ball.y_speed_max:
-            Ball.y_speed = Ball.y_speed - ((S1.y + S1.laenge / 2) - Ball.y) / 600
+            Ball.y_speed = Ball.y_speed - ((S1.y + S1.laenge / 2) - Ball.y) / 100
         else:
             if Ball.y_speed == abs(Ball.y_speed):
                 Ball.y_speed = Ball.y_speed_max
@@ -85,6 +86,7 @@ class Spielball:
         else:
             self.y_speed = self.y_speed * -1
             self.y = (self.y + self.y_speed)
+        self.x_speed = self.x_speed * 1.00005
 
 
 # Schläger
@@ -107,7 +109,7 @@ class Schlaeger():
 
     def Schlaegerbewegung(self):
         keys = pygame.key.get_pressed()
-        if self == S1:
+        if self == S1 and status == "PvsP":
             if keys[K_s] and (self.y + self.speed) <= (BOARD_HEIGHT/10*9 - self.laenge):
                 self.y = self.y + self.speed
             if keys[K_w] and (self.y - self.speed) >= (BOARD_HEIGHT/10 + 10):
@@ -118,6 +120,13 @@ class Schlaeger():
             if keys[K_o] and (self.y - self.speed) >= (BOARD_HEIGHT/10 + 10):
                 self.y = self.y - self.speed
 
+        elif status == "Easy":
+            if Ball.y < self.y + self.laenge / 2 and random.random() < 0.6 and (self.y + self.speed) >= (BOARD_HEIGHT/10 + 10):
+                self.y = self.y - self.speed
+            if Ball.y > self.y + self.laenge / 2 and random.random() < 0.6 and (self.y - self.speed) <= (BOARD_HEIGHT/10*9 - self.laenge):
+                self.y = self.y + self.speed
+
+
 Resultat = [0, 0]
 
 def Spielstand():
@@ -126,11 +135,13 @@ def Spielstand():
         Ball.x = xBall
         Ball.y = yBall
         Ball.y_speed = ball_speed_y
+        Ball.x_speed = -ball_speed_x
     if Ball.x + Ball.radius > (BOARD_LENGTH / 10 * 9):
         Resultat[0] = Resultat[0] + 1
         Ball.x = xBall
         Ball.y = yBall
         Ball.y_speed = ball_speed_y
+        Ball.x_speed = ball_speed_x
 
 def Anzeige():
     font = pygame.font.SysFont("comicsansms", 72)
@@ -156,24 +167,27 @@ def easteregg():
 
 
 # main game loop
-start = True
-game = True
-while start:
+status = "Start"
+while status == "Start":
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
             pygame.quit()
             sys.exit()
         if event.type == pygame.KEYUP and event.key == pygame.K_RETURN:
-            start = False
+            status = "PvsP"
+        if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
+            status = "Easy"
         else:
             pass
     Spielfeld()
     font = pygame.font.SysFont("comicsansms", 60)
-    text = font.render(("Drücke ENTER"), True, (RED))
-    DISPLAYSURF.blit(text, (BOARD_LENGTH / 2 - text.get_width() // 2, BOARD_HEIGHT / 2 - text.get_height() // 2))
+    text1 = font.render(("Drücke ENTER für 2 Spieler,"), True, (RED))
+    text2 = font.render(("Leerschlag um gegen den Computer zu spielen"), True, (RED))
+    DISPLAYSURF.blit(text1, (BOARD_LENGTH / 2 - text1.get_width() // 2, BOARD_HEIGHT / 2 - 2 * text1.get_height() // 2))
+    DISPLAYSURF.blit(text2, (BOARD_LENGTH / 2 - text2.get_width() // 2, BOARD_HEIGHT / 2 + text2.get_height() // 2))
     pygame.display.update()
 
-while game:
+while status == "PvsP" or "Easy":
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
             pygame.quit()
