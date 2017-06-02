@@ -109,7 +109,7 @@ class Schlaeger():
 
     def Schlaegerbewegung(self):
         keys = pygame.key.get_pressed()
-        if self == S1 and status == "PvsP":
+        if self == S1 and status == "PvP":
             if keys[K_s] and (self.y + self.speed) <= (BOARD_HEIGHT/10*9 - self.laenge):
                 self.y = self.y + self.speed
             if keys[K_w] and (self.y - self.speed) >= (BOARD_HEIGHT/10 + 10):
@@ -120,10 +120,16 @@ class Schlaeger():
             if keys[K_o] and (self.y - self.speed) >= (BOARD_HEIGHT/10 + 10):
                 self.y = self.y - self.speed
 
-        elif status == "Easy":
-            if Ball.y < self.y + self.laenge / 2 and random.random() < 0.6 and (self.y + self.speed) >= (BOARD_HEIGHT/10 + 10):
+        elif status == "Easy" or status == "Hard" or status == "Destroyer":
+            if status == "Easy":
+                schwierigkeit = 0.5
+            if status == "Hard":
+                schwierigkeit = 0.8
+            if status == "Destroyer":
+                schwierigkeit = 1
+            if Ball.y < self.y + self.laenge / 2 and random.random() < schwierigkeit and (self.y + self.speed) >= (BOARD_HEIGHT/10 + 10):
                 self.y = self.y - self.speed
-            if Ball.y > self.y + self.laenge / 2 and random.random() < 0.6 and (self.y - self.speed) <= (BOARD_HEIGHT/10*9 - self.laenge):
+            if Ball.y > self.y + self.laenge / 2 and random.random() < schwierigkeit and (self.y - self.speed) <= (BOARD_HEIGHT/10*9 - self.laenge):
                 self.y = self.y + self.speed
 
 
@@ -148,6 +154,10 @@ def Anzeige():
     text = font.render((str(Resultat[0])+" : "+ str(Resultat[1])), True, (BLACK))
     DISPLAYSURF.blit(text, (BOARD_LENGTH / 2 - text.get_width() // 2, BOARD_HEIGHT / 50))
 
+    font = pygame.font.SysFont("comicsansms", 40)
+    text = font.render(("ENTER drücken um das Spiel zu beenden"), True, (BLACK))
+    DISPLAYSURF.blit(text, (BOARD_LENGTH / 2 - text.get_width() // 2, BOARD_HEIGHT / 50 * 49 - text.get_height()))
+
 S1 = Schlaeger(BOARD_LENGTH / 10, Hoehe_S1, Schlaegerspeed)
 S2 = Schlaeger(BOARD_LENGTH / 10 * 9 - BOARD_LENGTH / 50, Hoehe_S2, Schlaegerspeed)
 Ball = Spielball(xBall, yBall, ball_speed_x, ball_speed_y, ball_speed_y_max, Radius)
@@ -157,41 +167,66 @@ FPSCLOCK = pygame.time.Clock()
 
 def easteregg():
     if Resultat[0] == Resultat[1] == 8:
-        game = False
-        font = pygame.font.SysFont("comicsansms", 72)
-        text = font.render(("Hallo"), True, (RED))
+        font = pygame.font.SysFont("comicsansms", 80)
+        text = font.render(("Haha"), True, (RED))
         DISPLAYSURF.blit(text, (BOARD_LENGTH / 2 - text.get_width() // 2, BOARD_HEIGHT / 2 - text.get_height() // 2))
         pygame.display.update()
 
-
+def button(x, y, laenge, hoehe, farbe, name, textgroesse):
+    pygame.draw.rect(DISPLAYSURF, farbe, (x, y, laenge, hoehe))
+    font = pygame.font.SysFont("comicsansms", textgroesse)
+    text = font.render((name), True, (BLACK))
+    DISPLAYSURF.blit(text, (x + (laenge - text.get_width()) / 2, y + (hoehe - text.get_height()) / 2))
+    mouse = pygame.mouse.get_pos()
+    if x < mouse[0] < x + laenge and y < mouse[1] < y + hoehe:
+        return True
+    else:
+        return False
 
 
 # main game loop
 status = "Start"
 while status == "Start":
     for event in pygame.event.get():
-        if event.type == pygame.QUIT or (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
+        if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             pygame.quit()
             sys.exit()
-        if event.type == pygame.KEYUP and event.key == pygame.K_RETURN:
-            status = "PvsP"
-        if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
-            status = "Easy"
-        else:
-            pass
-    Spielfeld()
-    font = pygame.font.SysFont("comicsansms", 60)
-    text1 = font.render(("Drücke ENTER für 2 Spieler,"), True, (RED))
-    text2 = font.render(("Leerschlag um gegen den Computer zu spielen"), True, (RED))
-    DISPLAYSURF.blit(text1, (BOARD_LENGTH / 2 - text1.get_width() // 2, BOARD_HEIGHT / 2 - 2 * text1.get_height() // 2))
-    DISPLAYSURF.blit(text2, (BOARD_LENGTH / 2 - text2.get_width() // 2, BOARD_HEIGHT / 2 + text2.get_height() // 2))
+
+    DISPLAYSURF.fill(BLACK)
+    font = pygame.font.SysFont("comicsansms", 72)
+    text = font.render(("Choose your Mode"), True, (WHITE))
+    DISPLAYSURF.blit(text, (BOARD_LENGTH / 2 - text.get_width() // 2, BOARD_HEIGHT / 6))
+
+    if button(BOARD_LENGTH/2 - 250, BOARD_HEIGHT/2 - 100, 200, 50, WHITE, "PvP", 50):
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                status = "PvP"
+
+    if button(BOARD_LENGTH/2 + 50, BOARD_HEIGHT/2 - 100, 200, 50, WHITE, "Easy", 50):
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                status = "Easy"
+
+    if button(BOARD_LENGTH/2 - 250, BOARD_HEIGHT/2 + 50, 200, 50, WHITE, "Hard", 50):
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                status = "Hard"
+
+    if button(BOARD_LENGTH/2 + 50, BOARD_HEIGHT/2 + 50, 200, 50, WHITE, "Destroyer", 50):
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                status = "Destroyer"
+
     pygame.display.update()
 
-while status == "PvsP" or "Easy":
+
+while status == "PvP" or status == "Easy" or status == "Hard" or status == "Destroyer":
     for event in pygame.event.get():
-        if event.type == pygame.QUIT or (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
+        if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             pygame.quit()
             sys.exit()
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+            status == "Ende"
     Spielfeld()
     S1.Schlaegerbewegung()
     S2.Schlaegerbewegung()
@@ -205,3 +240,27 @@ while status == "PvsP" or "Easy":
 
     pygame.display.update()
     FPSCLOCK.tick(FPS)
+
+
+while status == "Ende":
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+            pygame.quit()
+            sys.exit()
+
+    DISPLAYSURF.fill(BLACK)
+
+    font = pygame.font.SysFont("comicsansms", 72)
+
+    if Resultat[0] < Resultat[1]:
+        text = font.render(("Der rechte Spieler hat gewonnen!"), True, (WHITE))
+
+    if Resultat[0] > Resultat[1]:
+        text = font.render(("Der linke Spieler hat gewonnen!"), True, (WHITE))
+
+    if Resultat[0] == Resultat[1]:
+        text = font.render(("Unentschieden!"), True, (WHITE))
+
+    DISPLAYSURF.blit(text, (BOARD_LENGTH / 2 - text.get_width() // 2, BOARD_HEIGHT / 2 - text.get_height() // 2))
+
+    pygame.display.update()
